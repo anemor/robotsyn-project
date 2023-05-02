@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+data/calibration1/
+data/calibration2/
+data/calibration3_ark/
+
+#data/calibration/calibration_vid.mov
+*.mov
+
 # C extensions
 *.so
 
