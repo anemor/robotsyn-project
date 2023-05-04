@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-img_rgb = cv2.imread("./data/hand_cropped.jpg")
+img_rgb = cv2.imread("./data/video-bilder/image34.jpg")
 print(np.shape(img_rgb))
 #plt.imshow(img_rgb)
 #plt.show()
@@ -25,8 +25,9 @@ img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)'''
 
 gray_blurred = cv2.blur(img_gray, (3, 3))
 detected_circles = cv2.HoughCircles(gray_blurred, 
-                   cv2.HOUGH_GRADIENT, 1, 100, param1 = 200,
-               param2 = 11, minRadius = 0, maxRadius = 20)
+                   cv2.HOUGH_GRADIENT, 1, 100, param1 = 100,
+               param2 = 12, minRadius = 0, maxRadius = 20)
+
 if detected_circles is not None:
   
     # Convert the circle parameters a, b and r to integers.
@@ -40,12 +41,13 @@ if detected_circles is not None:
   
         # Draw a small circle (of radius 1) to show the center.
         cv2.circle(img_rgb, (a, b), 1, (0, 0, 255), 3)
+        print(a,b)
         imS = cv2.resize(img_rgb, (636, 583))
         cv2.imshow("Detected Circle", imS)
         cv2.waitKey(0)
 
 img_gray_norm=img_gray/255
-threshold = 0.3
+threshold = 0.2
 #w, h = img_gray.shape[::-1]
 #loc = np.where( img_gray >= threshold)
 points=img_gray_norm<threshold
