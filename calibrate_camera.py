@@ -96,6 +96,9 @@ def find_mean_errors(results, out_folder):
     print('Calibration data is saved in the folder "%s"' % realpath(out_folder))
 
 #======================= MAIN SCRIPT  ========================
+
+# extract_image_from_video(video_path='data/hands_video/IMG_0655.mov', out_folder='data/hands_video/')
+# print("FERDIG MED VIDEO\n")
 #------------------------ EXTRACT IMAGES ------------------------
 video_path = 'data/calibration/calibration_vid.mov'
 out_images_path = 'data/calibration/'
@@ -130,4 +133,6 @@ ok, K, dc, rvecs, tvecs, std_int, std_ext, per_view_errors = results
 find_mean_errors(results, output_folder)
 
 #------------------------ UNDISTORT IMAGES USING CALIBRATION ------------------------
-undistort_images(results, images_folder='data/hands/*.jpg', out_folder='data/undistorted/')
+print("Undistort\n")
+# undistort_images(results, images_folder='data/hands/*.jpg', out_folder='data/undistorted/')
+undistort_images(results, images_folder='data/hands_video/*.jpg', out_folder='data/hands_video/')

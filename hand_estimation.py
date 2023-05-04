@@ -31,29 +31,15 @@ quanser = Quanser()
 # single argument (the parameter vector), and likewise for computing
 # the Jacobian. This can be done like this:
 resfun = lambda p : quanser.residuals(u, weights, p[0], p[1], p[2])
-# resfun(p) vil sende p-verdien inn til lambdaen over
-#resfun = lambda p : np.reshape(quanser.residuals(u, weights, p[0], p[1], p[2]), -1)
+
 # Tip:
 # These parameter values (yaw, pitch, roll) are close to the optimal
 # estimates for image 0.
-p = np.array([11.6, 28.9, 0.0])*np.pi/180
 #p = np.array([11.6, 28.9, 0.0])*np.pi/180
-p_low = np.array([0.0001, 0.0001, 0.0001])
-p_high = np.array([100, 100, 100])*np.pi/180
-#
-# Task: Call gauss_newton  
-#
 
-# lage ny p
-#p = gauss_newton(resfun, p0, step_size=0.9, num_steps=10)
+p = gauss_newton(resfun, p0=p, step_size=0.9, num_steps=10, finite_difference_epsilon=1e-6)
 
-# 1.4
-p_opt = gauss_newton(resfun, p, step_size=0.9, num_steps=10)#, xtol=0.001)
-
-#gn = lambda p : gauss_newton(resfun, p, step_size=0.9, num_steps=10)
-
-r = resfun(p_opt)
-# r = resfun(p)
+r = resfun(p)
 print('Residuals on image %d:' % image_number)
 print(r)
 

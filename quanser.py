@@ -4,11 +4,11 @@ from common import *
 
 class Quanser:
     def __init__(self):
-        self.K = np.loadtxt('data/K.txt')
+        self.K = np.loadtxt('data/calibration/K.txt')
         self.heli_points = np.loadtxt('data/heli_points.txt').T
         self.platform_to_camera = np.loadtxt('data/platform_to_camera.txt')
 
-    def residuals(self, u, weights, yaw, pitch, roll):
+    def residuals_heli(self, u, weights, yaw, pitch, roll):
         # Compute the helicopter coordinate frames
         base_to_platform = translate(0.1145/2, 0.1145/2, 0.0)@rotate_z(yaw)
         hinge_to_base    = translate(0.00, 0.00,  0.325)@rotate_y(pitch)
@@ -22,30 +22,31 @@ class Quanser:
         # Compute the predicted image location of the markers
         p1 = self.arm_to_camera @ self.heli_points[:,:3] # første 3 linjene/arm markers
         p2 = self.rotors_to_camera @ self.heli_points[:,3:] # resterende 4 linjene/rotor markers
-        hat_u = project(self.K, np.hstack([p1, p2]))
-        self.hat_u = hat_u # Save for use in draw()
         
-        #
-        # TASK: Compute the vector of residuals.
-        #
-        # Tip: Use np.hstack to concatenate the horizontal and vertical residual components
-        # into a single 1D array. Note: The plotting code will not work correctly if you use
-        # a different ordering.
+        #p_camera = np.hstack([p1, p2])
+
+        self.hat_u = project(self.K, np.hstack([p1, p2]))
+        self.u = u
+
+        # The residuals for invalid entries should be
+        # multiplied by zero, using the weights array.
+
+        r = weights*(self.hat_u - u)
+
+        return np.hstack([r[0,:], r[1,:]])
+
+    def residuals(self, u, weights, yaw, pitch, roll):
+        # Compute the hand coordinate frames
         
-        # residual is difference in horizontal and vertical
-        u_weighted = u * np.array([weights, weights])
-        u_hat_weighted = u * np.array([weights, weights])
+        # Compute the predicted image location of the markers
 
-        u1 = u_weighted[:1]
-        u2 = u_weighted[1:]
-        u_hat1 = u_hat_weighted[:1]
-        u_hat2 = u_hat_weighted[1:]
-        #r = np.hstack((horizontal, vertical))
-        r = np.reshape(np.hstack((u_hat1-u1, u_hat2-u2)), -1)
-        #r = np.hstack((hat_u[:1], hat_u[1:]))
-        #r = np.zeros(2*7) # Placeholder, remove me!
+        self.hat_u = project(self.K, np.hstack([p1, p2]))
+        self.u = u
 
-        return r
+        # multiplying the residuals for invalid intries with 0
+        r = weights*(self.hat_u - u)
+
+        return np.hstack([r[0,:], r[1,:]])
 
     def draw(self, u, weights, image_number):
         I = plt.imread('data/video%04d.jpg' % image_number)
