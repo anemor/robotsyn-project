@@ -10,34 +10,39 @@ import glob
 from os.path import join, basename, realpath, dirname, exists, splitext
  
 # captures video frame by frame https://www.geeksforgeeks.org/python-opencv-capture-video-from-camera/
-def extract_image_from_video(video_path, out_path):
+def extract_image_from_video(video_path, out_folder):
     video = cv.VideoCapture(video_path)
     success, image = video.read()
     count = 0
     print('Extracting images from video\n')
     while(success):
         video.set(cv.CAP_PROP_POS_MSEC, (count*1000))       # to capture a frame every second
-        cv.imwrite(out_path + 'image%d.jpg' % count, image)
+        cv.imwrite(out_folder + 'image%d.jpg' % count, image)
         success, image = video.read()
         print('     Read frame #', count, ':', success)
         count += 1
     video.release()
 
-def undistort_images(results, image_path, out_path):
+def undistort_images(results, images_folder, out_folder):
     ok, K, dc, rvecs, tvecs, std_int, std_ext, per_view_errors = results
 
-    I = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
-    h,w = I.shape[:2]
-    dst = cv.undistort(I, K, dc)
-    cv.imwrite(out_path, dst)
+    image_paths = glob.glob(images_folder)
+    for image_path in sorted(image_paths):
+        print("%s..." % basename(image_path), end='')
+        test = 'data/hands/image0.jpg'
+        I = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
+        cv.imshow('image', I)
 
-def detect_checkerboard(board_size, square_size, calibrate_flags, detect_flags, subpix_criteria, image_path, out_path):
+        dst = cv.undistort(I, K, dc)
+        cv.imwrite(out_folder + 'undistorted__' + basename(image_path), dst)
+
+def detect_checkerboard(board_size, square_size, calibrate_flags, detect_flags, subpix_criteria, image_path, out_folder):
     # Detect checkerboard points
     # Note: This first tries to use existing checkerboard detections,
-    if exists(join(out_path, 'u_all.npy')):
-        u_all = np.load(join(out_path, 'u_all.npy'))
-        X_all = np.load(join(out_path, 'X_all.npy'))
-        image_size = np.loadtxt(join(out_path, 'image_size.txt')).astype(np.int32)
+    if exists(join(out_folder, 'u_all.npy')):
+        u_all = np.load(join(out_folder, 'u_all.npy'))
+        X_all = np.load(join(out_folder, 'X_all.npy'))
+        image_size = np.loadtxt(join(out_folder, 'image_size.txt')).astype(np.int32)
         print('Using previous checkerboard detection results.')
     else:
         # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ... (6,5,0)
@@ -46,7 +51,7 @@ def detect_checkerboard(board_size, square_size, calibrate_flags, detect_flags, 
         X_all = []
         u_all = []
         image_size = None
-        image_paths = glob.glob(image_path_pattern)
+        image_paths = glob.glob(image_path)
         for image_path in sorted(image_paths):
             print('%s...' % basename(image_path), end='')
 
@@ -66,11 +71,11 @@ def detect_checkerboard(board_size, square_size, calibrate_flags, detect_flags, 
             else:
                 print('failed to detect checkerboard corners, skipping.')
 
-        np.savetxt(join(output_folder, 'image_size.txt'), image_size)
+        np.savetxt(join(out_folder, 'image_size.txt'), image_size)
         #np.savetxt(join('/data/calibration', 'image_size.txt'), image_size)
 
-        np.save(join(out_path, 'u_all.npy'), u_all) # Detected checkerboard corner locations
-        np.save(join(out_path, 'X_all.npy'), X_all) # Corresponding 3D pattern coordinates
+        np.save(join(out_folder, 'u_all.npy'), u_all) # Detected checkerboard corner locations
+        np.save(join(out_folder, 'X_all.npy'), X_all) # Corresponding 3D pattern coordinates
     return X_all, u_all, image_size
 
 
@@ -90,16 +95,18 @@ def find_mean_errors(results, out_folder):
     np.savetxt(join(out_folder, 'std_int.txt'), std_int) # Standard deviations of intrinsics (entries in K and distortion coefficients)
     print('Calibration data is saved in the folder "%s"' % realpath(out_folder))
 
-
-
 #======================= MAIN SCRIPT  ========================
+#------------------------ EXTRACT IMAGES ------------------------
 video_path = 'data/calibration/calibration_vid.mov'
 out_images_path = 'data/calibration/'
 #extract_image_from_video(video_path, out_images_path)
 
+#------------------------ CALIBRATE CAMERA ------------------------
 image_path_pattern = 'data/calibration/*.jpg'
 output_folder = dirname(image_path_pattern)
 
+# CALIBRATE = True
+# results = None
 board_size = np.array([9,6]) # internal corners
 square_size = 1 # mm. Real world length of the sides of the squares
 
@@ -115,6 +122,12 @@ print('Calibrating. This may take a minute or two...', end='')
 results = cv.calibrateCameraExtended(X_all, u_all, image_size, None, None, flags=calibrate_flags)
 print('Done!')
 
+ok, K, dc, rvecs, tvecs, std_int, std_ext, per_view_errors = results
+
+#print('Calibration results are saved in the folder "%s"' % realpath(output_folder))
+#results = 
+#------------------------ CALIBRATION ERRROS ------------------------
 find_mean_errors(results, output_folder)
 
-undistort_images(results, image_path='data/hands/image0.jpg', out_path='data/hands/calibrated.png')
+#------------------------ UNDISTORT IMAGES USING CALIBRATION ------------------------
+undistort_images(results, images_folder='data/hands/*.jpg', out_folder='data/undistorted/')
