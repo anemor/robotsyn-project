@@ -42,6 +42,11 @@ class Quanser:
         little_second_to_third=translate_x(0.021,0.0,0)@rotate_z(p[17])
         little_third_to_fingertip=translate_x(0.0235,0.00,0)
 
+        thumb_wrist_to_first=translate_x(0.007,0,0.028)@rotate_x(np.deg2rad(90))@rotate_x(p[18])@rotate_y(p[19])
+        thumb_first_to_second=translate_x(0.04,0.0225,0)@rotate_z(p[20])
+        thumb_second_to_third=translate_x(0.031,0,0)@rotate_z(p[21])
+        thumb_third_to_fingertip=translate_x(0.03,0,0)
+
         self.wrist_to_camera=self.transform_camera_base_point@wrist
 
         self.index_first_to_camera=self.wrist_to_camera@index_wrist_to_first
@@ -63,6 +68,11 @@ class Quanser:
         self.little_second_to_camera=self.little_first_to_camera@little_first_to_second
         self.little_third_to_camera=self.little_second_to_camera@little_second_to_third
         self.little_fingertip_to_camera=self.little_third_to_camera@little_third_to_fingertip
+
+        self.thumb_first_to_camera=self.wrist_to_camera@thumb_wrist_to_first
+        self.thumb_second_to_camera=self.thumb_first_to_camera@thumb_first_to_second
+        self.thumb_third_to_camera=self.thumb_second_to_camera@thumb_second_to_third
+        self.thumb_fingertip_to_camera=self.thumb_third_to_camera@thumb_third_to_fingertip
         
 
         #base_to_platform = translate_x(0.1145/2, 0.1145/2, 0.0)@rotate_z(yaw)
@@ -95,9 +105,15 @@ class Quanser:
         p14=self.little_second_to_camera@self.X_p
         p15=self.little_third_to_camera@self.X_p
         p16=self.little_fingertip_to_camera@self.X_p
+
+        p17=self.thumb_first_to_camera@self.X_p
+        p18=self.thumb_second_to_camera@self.X_p
+        p19=self.thumb_third_to_camera@self.X_p
+        p20=self.thumb_fingertip_to_camera@self.X_p
+
         #p1 = self.arm_to_camera @ self.heli_points[:,:3]
         #p2 = self.rotors_to_camera @ self.heli_points[:,3:]
-        hat_u = project(self.K, np.hstack([p0, p1, p2, p3, p4, p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16]))
+        hat_u = project(self.K, np.hstack([p0, p1, p2, p3, p4, p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16,p17,p18,p19,p20]))
         self.hat_u = hat_u # Save for use in draw()
 
         r=hat_u-u

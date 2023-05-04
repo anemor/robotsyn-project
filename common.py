@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as PathEffects
 
 def rotate_x(radians): #Rotation about X-axis
     return np.array([[1, 0, 0, 0],

@@ -8,11 +8,11 @@ detections = np.loadtxt('./data/detection_img34.txt')
 quanser = Quanser()
 
 #p = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-p= np.zeros(18)
-#all_r = []
-#all_p = []
+p= np.zeros(22)
+all_r = []
+all_p = []
 
-image_number =0
+image_number =1
 #step_size=0.9
 #steps_nb=40
 
@@ -27,22 +27,23 @@ weights = detections[image_number, ::3]
 u = np.vstack((detections[image_number, 1::3], detections[image_number, 2::3]))
 
 #for i in range(len(detections)):
-#weights = detections[i, ::3]
-#u = np.vstack((detections[i, 1::3], detections[i, 2::3]))
+for i in range(len(detections)):
+    weights = detections[i, ::3]
+    u = np.vstack((detections[i, 1::3], detections[i, 2::3]))
 
 # Tip: Lambda functions can be defined inside a for-loop, defining
 # a different function in each iteration. Here we pass in the current
 # image's "u" and "weights".
-resfun = lambda p : quanser.residuals(u, weights, p)
+    resfun = lambda p : quanser.residuals(u, weights, p)
 
 # Tip: Use the previous image's parameter estimate as initialization
-p = least_squares(resfun, x0=p, method='lm').x
+    p = least_squares(resfun, x0=p, method='lm').x
 
 # Collect residuals and parameter estimate for plotting later
-#all_r.append(resfun(p))
-#all_p.append(p)
-#all_p = np.array(all_p)
-#all_r = np.array(all_r)
+    all_r.append(resfun(p))
+    all_p.append(p)
+all_p = np.array(all_p)
+all_r = np.array(all_r)
 
 print(np.rad2deg(p))
 r = resfun(p)
@@ -64,7 +65,7 @@ plt.show()
 
 # Tip: This saves the estimated angles to a txt file.
 # This can be useful for Part 3.
-#np.savetxt('trajectory_from_part1.txt', all_p)
+np.savetxt('trajectory_from_part1.txt', all_p)
 # It can be loaded as
 # all_p = np.loadtxt('trajectory_from_part1.txt')
 
