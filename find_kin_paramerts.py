@@ -6,7 +6,7 @@ from plot_all import plot_all
 
 #subset = np.arange(1, 350, 20)
 
-all_detections = np.loadtxt('./data/detections.txt')
+all_detections = np.loadtxt('./data/detection_green.txt')
 #all_detections = all_detections[subset, :]
 all_weights = all_detections[:, ::3]
 all_u       = all_detections[:, 1::3]
@@ -23,7 +23,7 @@ model = ModelA()
 init_p = []
 #if model_name == 'A':
 init_p.extend([0.083, 0.028, 0.035, 0.025, 0.0245])
-base_1=np.array([0.0,0.0,0.0,1.0])
+base_1=np.array([0.0,0.0,0.0])
 X_p = np.c_[base_1,base_1,base_1,base_1,base_1].reshape(-1)
 
 #init_p.extend(np.loadtxt('../data/heli_points.txt')[:,:3].reshape(-1))
@@ -52,11 +52,12 @@ p = least_squares(fun=resfun, x0=init_p, max_nfev=50, verbose=2).x
 
 # Estimate the state on all images (not just the subset).
 # The code below is mostly identical to part1b.
+# print(p)
 model.set_kinematic_parameters(p[:kdim])
-all_detections = np.loadtxt('../data/detections.txt')
+all_detections = np.loadtxt('./data/detection_green.txt')
 all_r = []
 all_p = []
-p = np.array([0.0, 0.0, 0.0])
+p = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 for i in range(len(all_detections)):
     weights = all_detections[i, ::3]
     u = np.vstack((all_detections[i, 1::3], all_detections[i, 2::3]))

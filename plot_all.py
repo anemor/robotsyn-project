@@ -17,6 +17,7 @@ def plot_all(all_p, all_r, detections, subtract_initial_offset):
     for i in range(all_p.shape[0]):
         valid = np.reshape(all_r[i], [2,-1])[:, weights[i,:] == 1]
         reprojection_errors.extend(np.linalg.norm(valid, axis=0))
+        print('picture',i,': ', np.linalg.norm(valid, axis=0))
     reprojection_errors = np.array(reprojection_errors)
     print('Reprojection error over whole image sequence:')
     print('- Maximum: %.04f pixels' % np.max(reprojection_errors))
@@ -46,6 +47,9 @@ def plot_all(all_p, all_r, detections, subtract_initial_offset):
     vis_yaw = all_p[:,0]
     vis_pitch = all_p[:,1]
     vis_roll = all_p[:,2]
+    vis_first_z= all_p[:,3]
+    vis_second= all_p[:,4]
+    vis_third= all_p[:,5]
     #if subtract_initial_offset:
     #    vis_yaw -= vis_yaw[0] - enc_yaw[0]
     #    vis_pitch -= vis_pitch[0] - enc_pitch[0]
@@ -55,7 +59,7 @@ def plot_all(all_p, all_r, detections, subtract_initial_offset):
     #enc_frame = enc_time*vis_fps
     vis_frame = np.arange(all_p.shape[0])
 
-    fig,axes = plt.subplots(3, 1, figsize=[6,6], sharex='col')
+    fig,axes = plt.subplots(6, 1, figsize=[6,6], sharex='col')
     #axes[0].plot(enc_frame, enc_yaw, 'k:', label='Encoder log')
     axes[0].plot(vis_frame, vis_yaw, 'k', label='Vision estimate')
     axes[0].legend()
@@ -75,4 +79,22 @@ def plot_all(all_p, all_r, detections, subtract_initial_offset):
     axes[2].set_ylim([-0.6, 0.6])
     axes[2].set_ylabel('Roll (radians)')
     axes[2].set_xlabel('Image number')
+
+    axes[3].plot(vis_frame, vis_first_z, 'k')
+    axes[3].set_xlim([0, vis_frame[-1]])
+    axes[3].set_ylim([-0.6, 0.6])
+    axes[3].set_ylabel('Roll (radians)')
+    axes[3].set_xlabel('Image number')
+
+    axes[4].plot(vis_frame, vis_second, 'k')
+    axes[4].set_xlim([0, vis_frame[-1]])
+    axes[4].set_ylim([-0.6, 0.6])
+    axes[4].set_ylabel('Roll (radians)')
+    axes[4].set_xlabel('Image number')
+
+    axes[5].plot(vis_frame, vis_third, 'k')
+    axes[5].set_xlim([0, vis_frame[-1]])
+    axes[5].set_ylim([-0.6, 0.6])
+    axes[5].set_ylabel('Roll (radians)')
+    axes[5].set_xlabel('Image number')
     plt.tight_layout()

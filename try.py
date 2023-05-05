@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from common import *
 
-transform_camera_base_point=translate_x(0.03,-0.1,-0.52)@rotate_z(np.deg2rad(-3.25))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
+#transform_camera_base_point=translate_x(0.03,-0.1,-0.52)@rotate_z(np.deg2rad(-3.25))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
+transform_camera_base_point=translate_x(0.0,-0.08,-0.52)@rotate_z(np.deg2rad(0))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
 print(transform_camera_base_point)
 
 K = np.loadtxt('./data/calibration/K.txt')
@@ -108,7 +109,7 @@ u_thumb_second,v_thumb_second=project(K,thumb_second)
 u_thumb_third,v_thumb_third=project(K,thumb_third)
 u_thumb_finegrtip, v_thumb_fingertip=project(K,thumb_fingertip)
 
-im=mpimg.imread('./data/video-bilder/image34.jpg')
+im=mpimg.imread('./data/dotted_hands/undistorted__image2.jpeg')
 plt.imshow(im)
 #plt.scatter(u_arm, v_arm, c='red', marker='.', s=20)
 plt.scatter(u_index_first, v_index_first, c='red', marker='.', s=20)
