@@ -6,7 +6,7 @@ class BaseModel:
     def __init__(self):
         self.K                  = np.loadtxt('./data/calibration/K.txt')
         #self.platform_to_camera = np.loadtxt('../data/platform_to_camera.txt')
-        self.transform_camera_base_point=translate_x(0.0,-0.08,-0.52)@rotate_z(np.deg2rad(0))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
+        self.transform_camera_base_point=translate_x(0.0,-0.08,-0.52)@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
         #self.transform_camera_base_point=translate_x(0.03,-0.1,-0.52)@rotate_z(np.deg2rad(-3.25))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
 
     def residuals_for_all(self, all_u, all_v, all_weights, p_kinematic, all_p_state):

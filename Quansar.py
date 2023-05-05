@@ -10,7 +10,7 @@ class Quanser:
         self.X_p = np.c_[self.base_0].reshape(4, 1)
 
         #self.platform_to_camera = np.loadtxt('./data/platform_to_camera.txt') må legge inn
-        self.transform_camera_base_point=translate_x(0.0,-0.08,-0.52)@rotate_z(np.deg2rad(0))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
+        self.transform_camera_base_point=translate_x(0.0,-0.08,-0.52)@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
         #self.transform_camera_base_point=translate_x(0.03,-0.1,-0.52)@rotate_z(np.deg2rad(-3.25))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
 
     def residuals(self, u, weights, p):
@@ -158,19 +158,19 @@ class Quanser_Index:
         self.X_p = np.c_[self.base_0].reshape(4, 1)
 
         #self.platform_to_camera = np.loadtxt('./data/platform_to_camera.txt') må legge inn
-        self.transform_camera_base_point=translate_x(0.001,-0.08,-0.52)@rotate_z(np.deg2rad(0))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))@rotate_y(np.deg2rad(60))
+        self.transform_camera_base_point=translate_x(0.001,-0.08,-0.52)@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))@rotate_y(np.deg2rad(60))
         #self.transform_camera_base_point=translate_x(0.03,-0.1,-0.52)@rotate_z(np.deg2rad(-3.25))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
 
     def residuals(self, u, weights, p):
         # Compute the helicopter coordinate frames
-        #wrist=rotate_y(p[0])@rotate_z(p[1])
+        wrist=rotate_y(p[0])@rotate_z(p[1])
 
         index_wrist_to_first=translate_x(0.088,0,0.031)@rotate_y(p[2])@rotate_z(p[3])
         index_first_to_second=translate_x(0.035,0,0)@rotate_z(p[4])
         index_second_to_third=translate_x(0.025,0.0,0)@rotate_z(p[5])
         index_third_to_fingertip=translate_x(0.0245,0.00,0)
 
-        self.wrist_to_camera=self.transform_camera_base_point#@wrist
+        self.wrist_to_camera=self.transform_camera_base_point@wrist
 
         self.index_first_to_camera=self.wrist_to_camera@index_wrist_to_first
         self.index_second_to_camera=self.index_first_to_camera@index_first_to_second
@@ -215,7 +215,7 @@ class Quanser_Index:
 
     def draw(self, u, weights, image_number):
         #I = plt.imread('./data_vid/data/video%04d.jpg' % image_number)
-        I=plt.imread('./data/dotted_hands/undistorted__image20.jpeg')
+        I=plt.imread('./data/hands_video/undistorted_image6.jpg')
         plt.imshow(I)
         plt.scatter(*u[:, weights == 1], linewidths=1, edgecolor='black', color='white', s=60, label='Observed')
         plt.scatter(*self.hat_u, color='red', label='Predicted', s=10)

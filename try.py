@@ -4,7 +4,7 @@ import matplotlib.image as mpimg
 from common import *
 
 #transform_camera_base_point=translate_x(0.03,-0.1,-0.52)@rotate_z(np.deg2rad(-3.25))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
-transform_camera_base_point=translate_x(0.0,-0.08,-0.52)@rotate_z(np.deg2rad(0))@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
+transform_camera_base_point=translate_x(0.0,-0.08,-0.52)@rotate_y(np.deg2rad(-90))@rotate_z(np.deg2rad(90))
 print(transform_camera_base_point)
 
 K = np.loadtxt('./data/calibration/K.txt')

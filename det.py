@@ -4,7 +4,7 @@ from scipy.optimize import least_squares
 from Quansar import Quanser, Quanser_Index
 from plot_all import * #burde laste inn
 
-detections = np.loadtxt('./data/detection_green.txt')
+detections = np.loadtxt('./data/detections_correct.txt')
 # quanser=Quanser()
 quanser=Quanser_Index()
 

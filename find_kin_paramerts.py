@@ -6,7 +6,7 @@ from plot_all import plot_all
 
 #subset = np.arange(1, 350, 20)
 
-all_detections = np.loadtxt('./data/detection_green.txt')
+all_detections = np.loadtxt('./data/detections_correct.txt')
 #all_detections = all_detections[subset, :]
 all_weights = all_detections[:, ::3]
 all_u       = all_detections[:, 1::3]
@@ -54,7 +54,7 @@ p = least_squares(fun=resfun, x0=init_p, max_nfev=50, verbose=2).x
 # The code below is mostly identical to part1b.
 # print(p)
 model.set_kinematic_parameters(p[:kdim])
-all_detections = np.loadtxt('./data/detection_green.txt')
+all_detections = np.loadtxt('./data/detections_correct.txt')
 all_r = []
 all_p = []
 p = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])

@@ -5,16 +5,16 @@ from Quansar import Quanser, Quanser_Index
 from plot_all import * #burde laste inn
 from gauss_newton import gauss_newton
 
-detections = np.loadtxt('./data/detection_all.txt')
+detections = np.loadtxt('./data/detections_correct.txt')
 # quanser=Quanser()
 quanser=Quanser_Index()
 
-p = np.array([np.deg2rad(60), np.deg2rad(10), np.deg2rad(10), np.deg2rad(10), np.deg2rad(10),np.deg2rad(10)])
+p = np.array([np.deg2rad(0), np.deg2rad(10), np.deg2rad(10), np.deg2rad(10), np.deg2rad(10),np.deg2rad(10)])
 #p= np.zeros(22)
 all_r = []
 all_p = []
 
-image_number = 19
+image_number = 5
 #step_size=0.9
 #steps_nb=40
 
@@ -24,7 +24,7 @@ image_number = 19
 # entries may be invalid if the corresponding markers were
 # not detected. Which entries are valid is encoded in
 # the "weights" array, which is a 1D array of length 7.
-detections = np.loadtxt('./data/detection_all.txt')
+#detections = np.loadtxt('./data/detections_correct.txt')
 weights = detections[image_number, ::3]
 u = np.vstack((detections[image_number, 1::3], detections[image_number, 2::3]))
 
